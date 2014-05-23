@@ -2,8 +2,9 @@
  * Created by andreyshustariov on 5/23/14.
  */
 
-function DatePicker(elementSelector, date) {
-   this._element = document.querySelector(elementSelector);
+function DatePicker(date) {
+   this._element = document.getElementsByTagName('body')[0];
+
    this._isVisible = false;
    this._cache = {
       dateElements : []
@@ -33,8 +34,20 @@ DatePicker.prototype.hide = function() {
    this._element.style.display = 'hide !important';
 };
 
+/**
+ *
+ * @returns {boolean|*} true if element is visible, false otherwise
+ */
 DatePicker.prototype.isVisible = function() {
    return this._isVisible;
+};
+
+/**
+ * Completely removes element from DOM
+ */
+DatePicker.prototype.destroy = function() {
+   var datePicker = document.getElementById('date-picker');
+   this._element.removeChild(datePicker);
 };
 
 DatePicker.prototype._openMonth = function(date) {
@@ -143,6 +156,7 @@ DatePicker.prototype._initialize = function() {
    datePickerContainer.appendChild(this._createDates());
 
    datePickerContainer.classList.add('date-picker');
+   datePickerContainer.id = 'date-picker';
 
    this.hide();
 
