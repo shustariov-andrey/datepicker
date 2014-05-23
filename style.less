@@ -1,0 +1,127 @@
+/* Styles go here */
+
+body {
+  font-family: Arial;
+}
+
+a {
+  cursor: pointer;
+}
+
+@selected-day: #4CAFED;
+
+.user-select (@type: none) {
+  user-select : @type;
+  -webkit-user-select : @type;
+  -moz-user-select : @type;
+  -o-user-select : @type;
+  -ms-user-select : @type;
+}
+
+.no-transform () {
+  -webkit-transform : translateZ(0);
+  -moz-transform : translateZ(0);
+  -o-transform : translateZ(0);
+  -ms-transform : translateZ(0);
+  transform : translateZ(0);
+}
+
+.date-picker {
+  width: 350px;
+  height: 284px;
+  border: 1px solid black;
+  margin: 0;
+  .no-transform();
+  .user-select(none);
+
+  .week {
+    width: 100%;
+    display: block;
+
+    .day {
+      display: block;
+      float : left;
+
+      width : 50px;
+      height: 40px;
+      text-align: center;
+      line-height: 40px;
+      box-sizing : border-box;
+    }
+
+    &.dates .day {
+      color: #000;
+
+      &.blocked {
+        color : #D3DEEB;
+      }
+
+      &:hover {
+        background-color: @selected-day;
+      }
+
+      &.current-day {
+        font-style: italic;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+
+      &.selected {
+        background-color: @selected-day;
+        border-radius: 2px;
+      }
+    }
+
+    &:after {
+      clear: both;
+    }
+  }
+
+  .month-pager {
+    width : 100%;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+
+    &:after {
+      clear : both;
+    }
+
+    .prev-month {
+      display: block;
+      text-align: center;
+      float:left;
+      width : 33%;
+
+      .month-name:before {
+        content : "< ";
+      }
+    }
+
+    .current-month {
+      text-align: center;
+      width : 34%;
+      float:left;
+    }
+
+    .next-month {
+      display: block;
+      text-align: center;
+      width : 33%;
+      float:left;
+      .month-name:after {
+        content : " >";
+      }
+    }
+
+    .month-name {
+      display: block;
+
+      &:hover {
+        background-color: #4F94E2;
+      }
+    }
+
+  }
+}
+
