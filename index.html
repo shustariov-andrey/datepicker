@@ -10,7 +10,8 @@
 <body>
     <div id="holder"></div>
     <script>
-        var d = new DatePicker('holder', new Date(2014, 4, 4));
+        var d = new DatePicker('#holder');
+        d.setSelectedDate(new Date(2014, 4, 24));
         d.show();
     </script>
 </body>

@@ -2,8 +2,8 @@
  * Created by andreyshustariov on 5/23/14.
  */
 
-function DatePicker(elementId, date) {
-   this._element = document.getElementById(elementId);
+function DatePicker(elementSelector, date) {
+   this._element = document.querySelector(elementSelector);
    this._isVisible = false;
    this._cache = {
       dateElements : []
