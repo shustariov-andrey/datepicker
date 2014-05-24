@@ -71,7 +71,10 @@
    };
 
    DatePicker.prototype._setupHandlers = function () {
-      Hammer(document.getElementById('date-picker')).on('tap', function (event) {
+      Hammer(document.getElementById('date-picker'), {
+         drag : false,
+         transform : false
+      }).on('tap', function (event) {
          if (event.target.classList.contains('day') &&
             event.target.parentElement.classList.contains('dates') && !event.target.classList.contains('blocked')) {
 

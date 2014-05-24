@@ -14,6 +14,7 @@ html {
 }
 
 @selected-day: #4CAFED;
+@active-element-color : #3022ed;
 
 .user-select (@type: none) {
   user-select : @type;
@@ -67,8 +68,8 @@ html {
         color : #D3DEEB;
       }
 
-      &:hover {
-        background-color: #3022ed;
+      &:active {
+        background-color: @active-element-color;
       }
 
       &.current-day {
@@ -128,8 +129,8 @@ html {
     .month-name {
       display: block;
 
-      &:hover {
-        background-color: #4F94E2;
+      &:active {
+        background-color: @active-element-color;
       }
     }
 
