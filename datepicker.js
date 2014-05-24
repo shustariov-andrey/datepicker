@@ -26,14 +26,7 @@
       this._markSelected();
 
       if (!skipEvent) {
-         var event = new CustomEvent('date-changed', {
-            detail : {
-               date : date,
-               originElement : this._originElement
-            },
-            bubbles : true
-         });
-         this._cache.datePicker.dispatchEvent(event);
+         this._originElement.value = this._selectedDate.getDate() + '/' + this._selectedDate.getMonth() + '/' + this._selectedDate.getFullYear();
       }
 
       this.hide();
@@ -88,9 +81,9 @@
          drag : false,
          transform : false
       }).on('tap', function (event) {
+
          if (event.target.classList.contains('day') &&
             event.target.parentElement.classList.contains('dates') && !event.target.classList.contains('blocked')) {
-
             var date = parseInt(event.target.dataset.date, 10);
             this.setSelectedDate(new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth(), date));
          } else if (event.target.classList.contains('month-name') && event.target.parentElement.classList.contains('prev-month')) {
@@ -105,6 +98,9 @@
       /* jshint -W083 */
       for (var i = 0; i < this._inputs.length; ++i) {
 
+         // Prevents keyboard popup on touch devices
+         this._inputs[i].setAttribute('readonly', 'readonly');
+
          this._inputs[i].addEventListener('focus', function(event) {
             event.preventDefault();
 
@@ -115,13 +111,6 @@
             }
             this.context.show(date, this.input);
          }.bind({context : this, input : this._inputs.item(i)}), false);
-
-         this._cache.datePicker.addEventListener('date-changed', function (event) {
-            var date = event.detail.date;
-            if (event.detail.originElement === this.input) {
-               this.input.value = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
-            }
-         }.bind({input : this._inputs.item(i)}));
       }
    };
 
@@ -201,7 +190,7 @@
       datePickerContainer.appendChild(this._createDates());
 
       datePickerContainer.classList.add('date-picker');
-      datePickerContainer.id = 'date-picker';
+//      datePickerContainer.id = 'date-picker';
 
       this._cache.datePicker = datePickerContainer;
 
