@@ -26,7 +26,8 @@
       this._markSelected();
 
       if (!skipEvent) {
-         this._originElement.value = this._selectedDate.getDate() + '/' + this._selectedDate.getMonth() + '/' + this._selectedDate.getFullYear();
+         this._originElement.value = this._selectedDate.getDate() + '/' + (this._selectedDate.getMonth() + 1) + '/' +
+            this._selectedDate.getFullYear();
       }
 
       this.hide();
@@ -95,22 +96,24 @@
    };
 
    DatePicker.prototype._setupInputHandlers = function() {
-      /* jshint -W083 */
+
+      function handler(event) {
+         event.preventDefault();
+
+         var date;
+         if (event.target.value) {
+            var dateArray = event.target.value.split('/');
+            date = new Date(parseInt(dateArray[2]), parseInt(dateArray[1]) - 1, parseInt(dateArray[0]));
+         }
+         this.context.show(date, this.input);
+      }
+
       for (var i = 0; i < this._inputs.length; ++i) {
 
          // Prevents keyboard popup on touch devices
          this._inputs[i].setAttribute('readonly', 'readonly');
 
-         this._inputs[i].addEventListener('focus', function(event) {
-            event.preventDefault();
-
-            var date;
-            if (event.target.value) {
-               var dateArray = event.target.value.split('/');
-               date = new Date(parseInt(dateArray[2]), parseInt(dateArray[1]) - 1, parseInt(dateArray[0]));
-            }
-            this.context.show(date, this.input);
-         }.bind({context : this, input : this._inputs.item(i)}), false);
+         this._inputs[i].addEventListener('focus', handler.bind({context : this, input : this._inputs.item(i)}), false);
       }
    };
 
