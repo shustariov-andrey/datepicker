@@ -54,7 +54,7 @@
 
    /**
     *
-    * @returns {boolean|*} true if element is visible, false otherwise
+    * @returns {boolean} true if element is visible, false otherwise
     */
    DatePicker.prototype.isVisible = function () {
       return this._isVisible;
@@ -64,8 +64,7 @@
     * Completely removes element from DOM
     */
    DatePicker.prototype.destroy = function () {
-      var datePicker = document.getElementById('date-picker');
-      this._containerElement.removeChild(datePicker);
+      this._containerElement.removeChild(this._cache.datePicker);
    };
 
    DatePicker.prototype._openMonth = function (date) {
@@ -85,7 +84,7 @@
 
    DatePicker.prototype._setupHandlers = function () {
       /*jshint -W064*/
-      Hammer(document.getElementById('date-picker'), {
+      Hammer(this._cache.datePicker, {
          drag : false,
          transform : false
       }).on('tap', function (event) {
@@ -112,7 +111,7 @@
             var date;
             if (event.target.value) {
                var dateArray = event.target.value.split('/');
-               date = new Date(parseInt(dateArray[2]), parseInt(dateArray[0]) - 1, parseInt(dateArray[1]));
+               date = new Date(parseInt(dateArray[2]), parseInt(dateArray[1]) - 1, parseInt(dateArray[0]));
             }
             this.context.show(date, this.input);
          }.bind({context : this, input : this._inputs.item(i)}), false);
@@ -120,7 +119,7 @@
          this._cache.datePicker.addEventListener('date-changed', function (event) {
             var date = event.detail.date;
             if (event.detail.originElement === this.input) {
-               this.input.value = date.toLocaleDateString();
+               this.input.value = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
             }
          }.bind({input : this._inputs.item(i)}));
       }
