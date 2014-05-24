@@ -7,30 +7,43 @@
 (function() {
    'use strict';
 
-   function DatePicker(date) {
+   function DatePicker(inputsSelector) {
+      this._inputs = document.querySelectorAll(inputsSelector);
       this._containerElement = document.getElementsByTagName('body')[0];
 
       this._isVisible = false;
       this._cache = {
          dateElements : []
       };
+
       this._initialize();
+      this._setupInputHandlers();
       this._setupHandlers();
-
-      date = date || new Date();
-
-      this._openMonth(date);
-      this.setSelectedDate(date);
    }
 
-   DatePicker.prototype.setSelectedDate = function (date) {
+   DatePicker.prototype.setSelectedDate = function (date, skipEvent) {
       this._selectedDate = date;
-      window.console.log('New date', this._selectedDate);
       this._markSelected();
+
+      if (!skipEvent) {
+         var event = new CustomEvent('date-changed', {
+            detail : {
+               date : date,
+               originElement : this._originElement
+            },
+            bubbles : true
+         });
+         this._cache.datePicker.dispatchEvent(event);
+      }
+
+      this.hide();
    };
 
-   DatePicker.prototype.show = function () {
+   DatePicker.prototype.show = function (date, originElement) {
+      this._openMonth(date);
+      this.setSelectedDate(date, true);
       this._isVisible = true;
+      this._originElement = originElement;
       this._cache.datePicker.style.display = 'block';
    };
 
@@ -57,11 +70,11 @@
 
    DatePicker.prototype._openMonth = function (date) {
       var shouldUpdateDates = false;
-      if (!this._activeMonth || (this._activeMonth.getMonth() !== date.getMonth())) {
+      if (!this._activeMonth || !date || (this._activeMonth.getMonth() !== date.getMonth())) {
          shouldUpdateDates = true;
       }
 
-      this._activeMonth = date;
+      this._activeMonth = date || new Date();
 
       if (shouldUpdateDates) {
          this._updateDates();
@@ -71,6 +84,7 @@
    };
 
    DatePicker.prototype._setupHandlers = function () {
+      /*jshint -W064*/
       Hammer(document.getElementById('date-picker'), {
          drag : false,
          transform : false
@@ -86,6 +100,30 @@
             this._openMonth(new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth() + 2, 0));
          }
       }.bind(this), false);
+   };
+
+   DatePicker.prototype._setupInputHandlers = function() {
+      /* jshint -W083 */
+      for (var i = 0; i < this._inputs.length; ++i) {
+
+         this._inputs[i].addEventListener('focus', function(event) {
+            event.preventDefault();
+
+            var date;
+            if (event.target.value) {
+               var dateArray = event.target.value.split('/');
+               date = new Date(parseInt(dateArray[2]), parseInt(dateArray[0]) - 1, parseInt(dateArray[1]));
+            }
+            this.context.show(date, this.input);
+         }.bind({context : this, input : this._inputs.item(i)}), false);
+
+         this._cache.datePicker.addEventListener('date-changed', function (event) {
+            var date = event.detail.date;
+            if (event.detail.originElement === this.input) {
+               this.input.value = date.toLocaleDateString();
+            }
+         }.bind({input : this._inputs.item(i)}));
+      }
    };
 
    DatePicker.prototype._updateDates = function () {
