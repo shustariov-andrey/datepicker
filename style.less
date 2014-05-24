@@ -8,6 +8,11 @@ a {
   cursor: pointer;
 }
 
+html {
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
+
 @selected-day: #4CAFED;
 
 .user-select (@type: none) {
@@ -63,7 +68,7 @@ a {
       }
 
       &:hover {
-        background-color: @selected-day;
+        background-color: #3022ed;
       }
 
       &.current-day {

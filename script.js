@@ -31,12 +31,12 @@
 
    DatePicker.prototype.show = function () {
       this._isVisible = true;
-      this._containerElement.style.display = 'block !important';
+      this._cache.datePicker.style.display = 'block';
    };
 
    DatePicker.prototype.hide = function () {
       this._isVisible = false;
-      this._containerElement.style.display = 'hide !important';
+      this._cache.datePicker.style.display = 'none';
    };
 
    /**
@@ -138,6 +138,9 @@
    };
 
    DatePicker.prototype._markSelected = function () {
+      if (this._cache.selectedElement) {
+         this._cache.selectedElement.classList.remove('selected');
+      }
       for (var i = 0; i < this._cache.dateElements.length; ++i) {
          if (this._selectedDate && !this._cache.dateElements[i].classList.contains('blocked') &&
             parseInt(this._cache.dateElements[i].innerText, 10) === this._selectedDate.getDate() &&
@@ -145,8 +148,7 @@
             this._activeMonth.getFullYear() === this._selectedDate.getFullYear()
             ) {
             this._cache.dateElements[i].classList.add('selected');
-         } else {
-            this._cache.dateElements[i].classList.remove('selected');
+            this._cache.selectedElement = this._cache.dateElements[i];
          }
       }
    };
@@ -160,6 +162,8 @@
 
       datePickerContainer.classList.add('date-picker');
       datePickerContainer.id = 'date-picker';
+
+      this._cache.datePicker = datePickerContainer;
 
       this.hide();
 
@@ -239,5 +243,7 @@
       }
       return documentFragment;
    };
+
+   window.DatePicker = DatePicker;
 
 }());
