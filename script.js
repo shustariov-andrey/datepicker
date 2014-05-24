@@ -104,7 +104,7 @@
          } else {
             this._cache.dateElements[j].innerText = new Date(firstDay.getFullYear(), firstDay.getMonth(), ++lastDayNumber).getDate();
             this._cache.dateElements[j].classList.add('blocked');
-            this._cache.dateElements[j].dataset.date = new Date(firstDay.getFullYear(), firstDay.getMonth(), ++lastDayNumber).getDate();
+            this._cache.dateElements[j].dataset.date = new Date(firstDay.getFullYear(), firstDay.getMonth(), lastDayNumber).getDate();
          }
 
       }
