@@ -27,7 +27,7 @@
         var d = new DatePicker(function(element, handler) {
             Hammer(element, {
                 drag : false,
-                tranfsorm : false
+                transform : false
             }).on('tap', handler, false);
         });
 
@@ -36,7 +36,10 @@
             var input = inputs.item(i);
             input.setAttribute('readonly', 'readonly');
 
-            input.addEventListener('focus', function(event) {
+            Hammer(input, {
+                drag : false,
+                transform : false
+            }).on('tap', function(event) {
                 event.preventDefault();
 
                 var date;
