@@ -16,7 +16,35 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/hammer.js/1.0.5/hammer.js"></script>
     <script src="datepicker.js"></script>
     <script>
-        var d = new DatePicker('.my-input');
+        var d = new DatePicker(function(element, handler) {
+            Hammer(element, {
+                drag : false,
+                tranfsorm : false
+            }).on('tap', handler, false);
+        });
+
+        var inputs = document.querySelectorAll('.my-input');
+        for (var i = 0; i < inputs.length; ++i) {
+            var input = inputs.item(i);
+            input.setAttribute('readonly', 'readonly');
+
+            input.addEventListener('focus', function(event) {
+                event.preventDefault();
+
+                var date;
+                if (event.target.value) {
+                    var dateArray = event.target.value.split('/');
+                    date = new Date(parseInt(dateArray[2]), parseInt(dateArray[1]) - 1, parseInt(dateArray[0]));
+                }
+                d.show(date, this.input);
+            }.bind({input : input}), false);
+
+            d.addOnNewDateSelectedHandlers(function (date, originalElement) {
+                originalElement.value = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+                d.hide();
+            });
+
+        }
     </script>
 </body>
 

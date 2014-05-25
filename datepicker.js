@@ -7,8 +7,14 @@
 (function() {
    'use strict';
 
-   function DatePicker(inputsSelector) {
-      this._inputs = document.querySelectorAll(inputsSelector);
+   /**
+    *
+    * @param {function} handlerTrigger function that binds datepicker's click handler to any other
+    * (i. e. Hammer tap)
+    *
+    * @constructor
+    */
+   function DatePicker(handlerTrigger) {
       this._containerElement = document.getElementsByTagName('body')[0];
 
       this._isVisible = false;
@@ -16,26 +22,40 @@
          dateElements : []
       };
 
+      this.onNewDateSelectedHandlers = [];
+
       this._initialize();
-      this._setupInputHandlers();
-      this._setupHandlers();
+      this._setupHandlers(handlerTrigger);
    }
 
-   DatePicker.prototype.setSelectedDate = function (date, skipEvent) {
+   DatePicker.prototype.addOnNewDateSelectedHandlers = function(handler) {
+      this.onNewDateSelectedHandlers.push(handler);
+   };
+
+   DatePicker.prototype.removeOnNewDateSelectedHandler = function(handler) {
+      for (var i = 0; i < this.onNewDateSelectedHandlers.length; ++i) {
+         if (this.onNewDateSelectedHandlers[i] === handler) {
+            this.onNewDateSelectedHandlers.splice(i, 1);
+            break;
+         }
+      }
+   };
+
+   DatePicker.prototype._onNewDateSelected = function (date) {
+      var fullDate = new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth(), date);
+      for (var i = 0; i < this.onNewDateSelectedHandlers.length; ++i) {
+         this.onNewDateSelectedHandlers[i](fullDate, this._originElement);
+      }
+   };
+
+   DatePicker.prototype._setSelectedDate = function (date) {
       this._selectedDate = date;
       this._markSelected();
-
-      if (!skipEvent) {
-         this._originElement.value = this._selectedDate.getDate() + '/' + (this._selectedDate.getMonth() + 1) + '/' +
-            this._selectedDate.getFullYear();
-      }
-
-      this.hide();
    };
 
    DatePicker.prototype.show = function (date, originElement) {
       this._openMonth(date);
-      this.setSelectedDate(date, true);
+      this._setSelectedDate(date, true);
       this._isVisible = true;
       this._originElement = originElement;
       this._cache.datePicker.style.display = 'block';
@@ -62,12 +82,13 @@
    };
 
    DatePicker.prototype._openMonth = function (date) {
+      date = date || new Date();
       var shouldUpdateDates = false;
-      if (!this._activeMonth || !date || (this._activeMonth.getMonth() !== date.getMonth())) {
+      if (!this._activeMonth || (this._activeMonth.getMonth() !== date.getMonth() || this._activeMonth.getFullYear() !== date.getFullYear())) {
          shouldUpdateDates = true;
       }
 
-      this._activeMonth = date || new Date();
+      this._activeMonth = date;
 
       if (shouldUpdateDates) {
          this._updateDates();
@@ -76,14 +97,14 @@
       }
    };
 
-   DatePicker.prototype._setupHandlers = function () {
+   DatePicker.prototype._setupHandlers = function (handlerTrigger) {
 
       function handler(event) {
          if (event.target.classList.contains('day') &&
             event.target.parentElement.classList.contains('dates') && !event.target.classList.contains('blocked')) {
 
             var date = parseInt(event.target.dataset.date, 10);
-            this.setSelectedDate(new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth(), date));
+            this._onNewDateSelected(date);
          } else if (event.target.classList.contains('month-name') && event.target.parentElement.classList.contains('prev-month')) {
             this._openMonth(new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth(), 0));
          } else if (event.target.classList.contains('month-name') && event.target.parentElement.classList.contains('next-month')) {
@@ -91,37 +112,10 @@
          }
       }
 
-
-      if (typeof(Hammer) !== 'undefined') {
-         /*jshint -W064*/
-         Hammer(this._cache.datePicker, {
-            drag : false,
-            transform : false
-         }).on('tap', handler.bind(this), false);
+      if (handlerTrigger) {
+         handlerTrigger(this._cache.datePicker, handler.bind(this));
       } else {
          this._cache.datePicker.addEventListener('click', handler.bind(this), false);
-      }
-   };
-
-   DatePicker.prototype._setupInputHandlers = function() {
-
-      function handler(event) {
-         event.preventDefault();
-
-         var date;
-         if (event.target.value) {
-            var dateArray = event.target.value.split('/');
-            date = new Date(parseInt(dateArray[2]), parseInt(dateArray[1]) - 1, parseInt(dateArray[0]));
-         }
-         this.context.show(date, this.input);
-      }
-
-      for (var i = 0; i < this._inputs.length; ++i) {
-
-         // Prevents keyboard popup on touch devices
-         this._inputs[i].setAttribute('readonly', 'readonly');
-
-         this._inputs[i].addEventListener('focus', handler.bind({context : this, input : this._inputs.item(i)}), false);
       }
    };
 
@@ -201,7 +195,6 @@
       datePickerContainer.appendChild(this._createDates());
 
       datePickerContainer.classList.add('date-picker');
-//      datePickerContainer.id = 'date-picker';
 
       this._cache.datePicker = datePickerContainer;
 
