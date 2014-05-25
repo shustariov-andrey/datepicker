@@ -90,7 +90,7 @@ html {
     }
   }
 
-  .month-pager {
+  .date-pager {
     width : 100%;
     display: inline-block;
     height: 40px;
@@ -100,14 +100,17 @@ html {
       clear : both;
     }
 
-    .prev-month {
+    .prev {
       display: block;
       text-align: center;
       float:left;
       width : 33%;
 
-      .month-name:before {
-        content : "< ";
+      .month:before {
+        content : "<";
+      }
+      .year:before {
+        content : "<<";
       }
     }
 
@@ -117,18 +120,23 @@ html {
       float:left;
     }
 
-    .next-month {
+    .next {
       display: block;
       text-align: center;
       width : 33%;
       float:left;
-      .month-name:after {
-        content : " >";
+      .month:after {
+        content : ">";
+      }
+
+      .year:after {
+        content : ">>";
       }
     }
 
-    .month-name {
-      display: block;
+    .month, .year {
+      display: inline-block;
+      width: 50%;
 
       &:active {
         background-color: @active-element-color;
@@ -136,11 +144,4 @@ html {
     }
 
   }
-}
-
-.my-input {
-  height: 30px;
-  line-height: 30px;
-  font-size: 16px;
-  border-radius: 2px;
 }

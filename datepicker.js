@@ -105,10 +105,14 @@
 
             var date = parseInt(event.target.dataset.date, 10);
             this._onNewDateSelected(date);
-         } else if (event.target.classList.contains('month-name') && event.target.parentElement.classList.contains('prev-month')) {
+         } else if (event.target.classList.contains('month') && event.target.parentElement.classList.contains('prev')) {
             this._openMonth(new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth(), 0));
-         } else if (event.target.classList.contains('month-name') && event.target.parentElement.classList.contains('next-month')) {
+         } else if (event.target.classList.contains('month') && event.target.parentElement.classList.contains('next')) {
             this._openMonth(new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth() + 2, 0));
+         } else if (event.target.classList.contains('year') && event.target.parentElement.classList.contains('prev')) {
+            this._openMonth(new Date(this._activeMonth.getFullYear() - 1, this._activeMonth.getMonth(), this._activeMonth.getDate()));
+         } else if (event.target.classList.contains('year') && event.target.parentElement.classList.contains('next')) {
+            this._openMonth(new Date(this._activeMonth.getFullYear() + 1, this._activeMonth.getMonth(), this._activeMonth.getDate()));
          }
       }
 
@@ -149,12 +153,7 @@
       var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June",
          "July", "August", "Sep", "Oct", "Nov", "Dec" ];
 
-      var prevMonth = new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth(), 0);
-      var nextMonth = new Date(this._activeMonth.getFullYear(), this._activeMonth.getMonth() + 2, 0);
-
-      this._cache.prevMonth.innerText = monthNames[prevMonth.getMonth()] + ', ' + prevMonth.getFullYear();
       this._cache.currentMonth.innerText = monthNames[this._activeMonth.getMonth()] + ', ' + this._activeMonth.getFullYear();
-      this._cache.nextMonth.innerText = monthNames[nextMonth.getMonth()] + ', ' + nextMonth.getFullYear();
    };
 
    DatePicker.prototype._markToday = function () {
@@ -205,27 +204,30 @@
 
    DatePicker.prototype._createMonthPager = function () {
       var monthPager = document.createElement('div');
-      monthPager.classList.add('month-pager');
+      monthPager.classList.add('date-pager');
 
       var prevMonth = document.createElement('div');
-      prevMonth.classList.add('prev-month');
+      prevMonth.classList.add('prev');
 
       var prevMonthName = document.createElement('a');
-      prevMonthName.classList.add('month-name');
+      prevMonthName.classList.add('month');
+      var prevYearName = document.createElement('a');
+      prevYearName.classList.add('year');
 
       var nextMonth = document.createElement('div');
-      nextMonth.classList.add('next-month');
+      nextMonth.classList.add('next');
 
       var nextMonthName = prevMonthName.cloneNode(true);
+      var nextYearName = prevYearName.cloneNode(true);
 
+      prevMonth.appendChild(prevYearName);
       prevMonth.appendChild(prevMonthName);
       nextMonth.appendChild(nextMonthName);
+      nextMonth.appendChild(nextYearName);
 
       var currentMonth = document.createElement('div');
       currentMonth.classList.add('current-month');
 
-      this._cache.prevMonth = prevMonthName;
-      this._cache.nextMonth = nextMonthName;
       this._cache.currentMonth = currentMonth;
 
 
