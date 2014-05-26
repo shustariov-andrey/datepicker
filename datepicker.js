@@ -2,15 +2,16 @@
  * Created by andreyshustariov on 5/23/14.
  */
 
-/*global Hammer: true*/
-
 (function() {
    'use strict';
 
    /**
     *
-    * @param {function} handlerTrigger function that binds datepicker's click handler to any other
+    * @param {function} handlerTrigger function that describes how DatePicker binds handlers
     * (i. e. Hammer tap)
+    * @param {object} options - configuration
+    *
+    * @config {boolean} options.backdrop - either to hide date picker on overlay click or not
     *
     * @constructor
     */
@@ -86,6 +87,11 @@
       this._containerElement.removeChild(this._cache.overlay);
    };
 
+   /**
+    * Opens date picker on month and year, that specified in date
+    * @param {Date} date
+    * @private
+    */
    DatePicker.prototype._openMonth = function (date) {
       date = date || new Date();
       var shouldUpdateDates = false;

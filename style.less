@@ -8,11 +8,6 @@ a {
   cursor: pointer;
 }
 
-html {
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-}
-
 @selected-day: #4CAFED;
 @active-element-color : #3022ed;
 
@@ -39,6 +34,7 @@ html {
   left: 0;
   top: 0;
   background-color: rgba(173, 173, 173, 0.3);
+  z-index: 10;
 }
 
 .date-picker {
