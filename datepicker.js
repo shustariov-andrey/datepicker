@@ -14,7 +14,7 @@
     *
     * @constructor
     */
-   function DatePicker(handlerTrigger) {
+   function DatePicker(handlerTrigger, options) {
       this._containerElement = document.getElementsByTagName('body')[0];
 
       this._isVisible = false;
@@ -23,6 +23,8 @@
       };
 
       this.onNewDateSelectedHandlers = [];
+
+      this.options = options || {};
 
       this._initialize();
       this._setupHandlers(handlerTrigger);
@@ -58,12 +60,14 @@
       this._setSelectedDate(date, true);
       this._isVisible = true;
       this._originElement = originElement;
+      this._cache.overlay.style.display = 'block';
       this._cache.datePicker.style.display = 'block';
    };
 
    DatePicker.prototype.hide = function () {
       this._isVisible = false;
       this._cache.datePicker.style.display = 'none';
+      this._cache.overlay.style.display = 'none';
    };
 
    /**
@@ -79,6 +83,7 @@
     */
    DatePicker.prototype.destroy = function () {
       this._containerElement.removeChild(this._cache.datePicker);
+      this._containerElement.removeChild(this._cache.overlay);
    };
 
    DatePicker.prototype._openMonth = function (date) {
@@ -120,6 +125,14 @@
          handlerTrigger(this._cache.datePicker, handler.bind(this));
       } else {
          this._cache.datePicker.addEventListener('click', handler.bind(this), false);
+      }
+
+      if (this.options.backdrop) {
+         if (handlerTrigger) {
+            handlerTrigger(this._cache.overlay, this.hide.bind(this));
+         } else {
+            this._cache.overlay.addEventListener('click', this.hide.bind(this), false);
+         }
       }
    };
 
@@ -196,10 +209,12 @@
       datePickerContainer.classList.add('date-picker');
 
       this._cache.datePicker = datePickerContainer;
+      this._cache.overlay = this._createDatePickerOverlay();
 
       this.hide();
 
-      this._containerElement.appendChild(datePickerContainer);
+      this._containerElement.appendChild(this._cache.datePicker);
+      this._containerElement.appendChild(this._cache.overlay);
    };
 
    DatePicker.prototype._createMonthPager = function () {
@@ -277,6 +292,12 @@
          documentFragment.appendChild(weekElement);
       }
       return documentFragment;
+   };
+
+   DatePicker.prototype._createDatePickerOverlay = function() {
+      var element = document.createElement('div');
+      element.classList.add('overlay');
+      return element;
    };
 
    window.DatePicker = DatePicker;
